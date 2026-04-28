@@ -1,215 +1,355 @@
-import React, { useState, useEffect } from 'react';
-import { Droplets, Anchor, ArrowRight, Heart, MessageCircle, ShoppingBag, Waves, Sparkles, CheckCircle2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Menu, X, ChevronRight, Sparkles, Heart, Coffee, Quote, Users, ArrowRight, Link, Bird, Fingerprint } from 'lucide-react';
+import { FaInstagram, FaFacebookF, FaTiktok, FaSnapchatGhost, FaPinterestP } from 'react-icons/fa';
+// --- CUSTOM SVG ICONS FOR TIKTOK, SNAPCHAT & PINTEREST ---
+const TikTokIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/>
+  </svg>
+);
 
+const SnapchatIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.11 1.74c-2.3 0-4.64.95-5.9 3.12-.66 1.15-.88 2.66-.75 4.09.28 2.94 1.83 5.37 3.55 7.6.48.62 1 1.25 1.56 1.84.45.47.88.94 1.43 1.34.34.25.75.46 1.18.5a2 2 0 0 0 1.25-.33c.48-.33.9-.76 1.3-1.18.6-.65 1.17-1.32 1.7-2.02 1.74-2.27 3.26-4.75 3.51-7.75.14-1.5-.12-3.03-.8-4.2-1.3-2.22-3.64-3.01-6.03-3.01zm-1.8 15.68c-.64-.53-1.28-1.08-1.93-1.63-.44-.38-.9-.76-1.32-1.16a29.13 29.13 0 0 1-2.9-3.23c-.34-.44-.65-.92-.88-1.42-.36-.78-.5-1.65-.45-2.52.05-1.05.3-2.1.8-3.03.9-1.66 2.5-2.82 4.4-3.15 1.73-.3 3.52 0 5 1.01 1.45 1 2.45 2.5 2.76 4.25.17.97.08 1.96-.23 2.88-.28.84-.7 1.63-1.2 2.34-1.1 1.54-2.4 2.94-3.66 4.35-.45.5-1.04 1.05-1.68 1.12-.22.02-.45-.03-.63-.16l-.08-.05z"/>
+  </svg>
+);
+
+const PinterestIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.105 0 7.301 2.923 7.301 6.822 0 4.084-2.574 7.37-6.147 7.37-1.2 0-2.328-.624-2.714-1.363l-.74 2.818c-.268 1.023-.996 2.302-1.488 3.084 1.144.35 2.365.539 3.626.539 6.623 0 11.988-5.367 11.988-11.988C24 5.367 18.64 0 12.017 0z"/>
+  </svg>
+);
+
+// --- MAIN APPLICATION ---
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [scrolled, setScrolled] = useState(false);
-  const [affirmation, setAffirmation] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState('home'); 
+  const [hoveredTenet, setHoveredTenet] = useState(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  // The external Store URL
+  const STORE_URL = "https://themilliondollarbill.us.com";
+
+  // --- DYNAMIC QUOTES & BACKGROUND LOGIC ---
+  const allQuotes = [
+    { text: "Prosperity isn't just about what's in your pocket; it's about the peace in your spirit and the authenticity in your step.", author: "Million Dollar Bill" },
+    { text: "The ocean doesn't apologize for its waves. Never apologize for your energy.", author: "Myrtle Beach Roots" },
+    { text: "Unity is the highest frequency. When we rise together, the tide lifts all ships.", author: "Aeterna Opera" },
+    { text: "Authenticity is your ultimate currency. Never trade it for temporary approval.", author: "The MD Mindset" },
+    { text: "Peace is not the absence of storms, but the deeply anchored confidence within them.", author: "Inner Wealth" },
+    { text: "True luxury is waking up with a clear mind, a full heart, and an unstoppable spirit.", author: "Million Dollar Bill" },
+    { text: "Love isn't just an emotion; it's the foundation of every lasting empire.", author: "Aeterna Opera" },
+    { text: "Your aura introduces you before you even speak. Make sure it says 'Prosperity'.", author: "The MD Mindset" },
+    { text: "Abundance flows like water. Stop building dams and start building reservoirs.", author: "Million Dollar Bill" },
+    { text: "True luxury is fluid. It adapts, it overcomes, and it never forces itself. It just is.", author: "Aeterna Opera" },
+    { text: "Your frequency is the tide. Make sure it lifts every ship around you.", author: "Myrtle Beach Roots" },
+    { text: "Wealth is loud, but prosperity is a quiet, unshakeable confidence.", author: "The MD Mindset" }
+  ];
+
+  const dailyBackgrounds = [
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=2560", 
+    "https://images.unsplash.com/photo-1518837695005-2083093ee354?auto=format&fit=crop&q=80&w=2560", 
+    "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2560", 
+    "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&q=80&w=2560", 
+    "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&q=80&w=2560", 
+    "https://images.unsplash.com/photo-1552083375-1447ce886485?auto=format&fit=crop&q=80&w=2560"  
+  ];
+
+  const dailyQuotes = useMemo(() => {
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    const startIndex = seed % allQuotes.length;
+    
+    const selection = [];
+    for(let i = 0; i < 8; i++) {
+      selection.push(allQuotes[(startIndex + i) % allQuotes.length]);
+    }
+    return selection;
   }, []);
 
-  const handleAffirmationSubmit = (e) => {
-    e.preventDefault();
-    if(affirmation.trim()) {
-      setIsSubmitted(true);
-      setAffirmation('');
-      setTimeout(() => setIsSubmitted(false), 3000);
-    }
-  };
+  const currentBgImage = useMemo(() => {
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    return dailyBackgrounds[seed % dailyBackgrounds.length];
+  }, []);
 
-  const quotes = [
-    { id: 1, text: "Abundance flows like water. Stop building dams and start building reservoirs. You are meant to overflow.", author: "Founder, MDB Co." },
-    { id: 2, text: "True luxury is fluid. It adapts, it overcomes, and it never forces itself. It just is.", author: "Million Dollar Mindset" },
-    { id: 3, text: "Your frequency is the tide. Make sure it lifts every ship around you.", author: "Daily Affirmation" }
-  ];
-
-  const launches = [
-    { id: 1, name: "The 'Deep Water' Myrtle Beach Collection", status: "Live Now", type: "Apparel", image: "https://images.unsplash.com/photo-1528892952291-009c663ce843?q=80&w=1000&auto=format&fit=crop" },
-    { id: 2, name: "Million Dollar Beauties: The Aqua Palette", status: "Dropping Soon", type: "Cosmetics", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=1000&auto=format&fit=crop" },
-    { id: 3, name: "Million Dollar Babies: Coastal Knits", status: "Waitlist Open", type: "Infant Wear", image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?q=80&w=1000&auto=format&fit=crop" }
-  ];
-
-  return (
-    <div className="min-h-screen font-sans text-white bg-slate-950 relative overflow-x-hidden selection:bg-cyan-300 selection:text-slate-900">
-      
-      {/* Animated Oceanic Background Elements */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-cyan-950"></div>
-        <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-cyan-500/10 rounded-full blur-[120px] mix-blend-screen animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50rem] h-[50rem] bg-blue-600/10 rounded-full blur-[150px] mix-blend-screen"></div>
-        <div className="absolute top-[40%] left-[60%] w-96 h-96 bg-teal-400/10 rounded-full blur-[120px] mix-blend-screen"></div>
-      </div>
-      
-      {/* Navigation - Dynamic Glassmorphism */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-2' : 'py-6'} px-4 sm:px-6`}>
-        <div className={`max-w-7xl mx-auto transition-all duration-300 backdrop-blur-2xl border border-white/10 flex justify-between items-center shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] ${scrolled ? 'bg-slate-900/80 rounded-full px-6 py-3' : 'bg-white/5 rounded-3xl px-6 py-4'}`}>
-          <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('home')}>
-            <Waves className="text-cyan-400 w-7 h-7 group-hover:scale-110 transition-transform" />
-            <span className="text-xl sm:text-2xl font-black tracking-tighter uppercase drop-shadow-md text-white hidden sm:block">
-              MDB Co.
-            </span>
+  // --- SUB-PAGES ---
+  
+  const HomePage = () => (
+    <div className="animate-in fade-in duration-700">
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden min-h-[90vh] flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#0B132B] via-[#003B46] to-[#D4AF37]/30 z-0" />
+        <div 
+          className="absolute inset-0 opacity-40 bg-cover bg-center mix-blend-overlay z-0"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=2000')" }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 text-[#FFD662] font-semibold text-sm tracking-widest uppercase shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+            <Sparkles size={16} />
+            <span>Born in Myrtle Beach</span>
+            <Sparkles size={16} />
           </div>
           
-          <div className="flex space-x-4 sm:space-x-8 font-bold text-xs sm:text-sm uppercase tracking-widest text-white/70">
-            <button onClick={() => setActiveTab('home')} className={`hover:text-cyan-300 transition-all ${activeTab === 'home' ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]' : ''}`}>Vision</button>
-            <button onClick={() => setActiveTab('community')} className={`hover:text-cyan-300 transition-all ${activeTab === 'community' ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]' : ''}`}>Community</button>
-            <button onClick={() => setActiveTab('vault')} className={`hover:text-cyan-300 transition-all ${activeTab === 'vault' ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]' : ''}`}>Vault</button>
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-6 tracking-tight leading-tight drop-shadow-2xl">
+            Live the <br className="hidden md:block"/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD662] via-[#D4AF37] to-[#FFF0B3]">Million Dollar</span> Life.
+          </h2>
+          
+          <p className="mt-4 max-w-2xl text-xl md:text-2xl text-gray-200 mx-auto mb-10 font-medium leading-relaxed drop-shadow-md">
+            Unity. Peace. Love. Prosperity. <br/>
+            Step into the energy and look absolutely incredible while doing it.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
+            <a href={STORE_URL} className="hover-bounce bg-gradient-to-r from-[#FFD662] to-[#D4AF37] text-[#0B132B] px-10 py-5 rounded-full flex items-center justify-center space-x-2 text-lg font-extrabold uppercase tracking-widest shadow-[0_10px_30px_rgba(212,175,55,0.4)]">
+              <span>Shop the Vibe</span>
+              <ChevronRight className="h-6 w-6" />
+            </a>
           </div>
-
-          <button className="bg-cyan-400/20 backdrop-blur-md border border-cyan-400/50 text-cyan-50 px-4 sm:px-6 py-2 rounded-full font-black uppercase tracking-wider text-xs sm:text-sm hover:bg-cyan-400 hover:text-slate-900 transition-all shadow-[0_0_15px_rgba(34,211,238,0.3)] flex items-center space-x-2">
-            <ShoppingBag className="w-4 h-4 hidden sm:block" />
-            <span>Shop</span>
-          </button>
         </div>
-      </nav>
+      </section>
 
-      {/* Main Content Area */}
-      <div className="relative z-10 pt-32 pb-20 px-4 sm:px-6 max-w-7xl mx-auto min-h-screen flex flex-col justify-center">
+      <section className="py-24 bg-[#0B132B] border-t border-white/10 relative overflow-hidden flex items-center justify-center min-h-[60vh]">
+        <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none transition-all duration-700 ease-out z-0">
+          <div className={`transform transition-all duration-700 ${hoveredTenet === 0 ? 'scale-100 translate-y-0 opacity-100' : 'scale-50 translate-y-20 opacity-0'} absolute`}>
+            <Link className="w-80 h-80 text-[#D4AF37]" />
+          </div>
+          <div className={`transform transition-all duration-700 ${hoveredTenet === 1 ? 'scale-100 translate-y-0 opacity-100' : 'scale-50 translate-y-20 opacity-0'} absolute`}>
+            <Bird className="w-80 h-80 text-blue-300" />
+          </div>
+          <div className={`transform transition-all duration-700 ${hoveredTenet === 2 ? 'scale-100 translate-y-0 opacity-100' : 'scale-50 translate-y-20 opacity-0'} absolute`}>
+            <Fingerprint className="w-80 h-80 text-[#FFD662]" />
+          </div>
+          <div className={`transform transition-all duration-700 ${hoveredTenet === 3 ? 'scale-100 translate-y-0 opacity-100' : 'scale-50 translate-y-20 opacity-0'} absolute`}>
+            <Heart className="w-80 h-80 text-pink-500" />
+          </div>
+        </div>
+
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37] rounded-full mix-blend-multiply filter blur-[150px] opacity-20 z-0"></div>
         
-        {/* HOME TAB */}
-        {activeTab === 'home' && (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8 text-center lg:text-left">
-                <div className="inline-flex items-center space-x-2 bg-blue-900/30 backdrop-blur-md px-4 py-2 rounded-full border border-cyan-500/30 text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-200 shadow-[0_0_15px_rgba(34,211,238,0.1)] mx-auto lg:mx-0">
-                  <Droplets className="w-4 h-4 text-cyan-400" />
-                  <span>Born by the water. Worn Worldwide.</span>
-                </div>
-                
-                <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black leading-none tracking-tighter drop-shadow-2xl">
-                  WE ARE <br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-200 drop-shadow-[0_0_30px_rgba(34,211,238,0.3)]">
-                    ABUNDANCE.
-                  </span>
-                </h1>
-                
-                <p className="text-lg sm:text-xl lg:text-2xl font-light leading-relaxed text-blue-50 drop-shadow-md max-w-2xl mx-auto lg:mx-0">
-                  Ridiculously rich in spirit, style, and truth. We've tapped into a frequency as deep and unstoppable as the ocean. Dive in. 
-                </p>
-                
-                <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-                  <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm sm:text-lg hover:bg-white hover:text-blue-950 transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] flex items-center justify-center space-x-2 group">
-                    <span>Join The Movement</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 w-full">
+          <h3 className="text-3xl md:text-5xl font-extrabold text-white mb-12 drop-shadow-lg">
+            Prosperity is a <span className="text-[#D4AF37] italic">Mindset</span>.
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative">
+            {['Unity', 'Peace', 'Authenticity', 'Love'].map((value, idx) => (
+              <div 
+                key={idx} 
+                onMouseEnter={() => setHoveredTenet(idx)}
+                onMouseLeave={() => setHoveredTenet(null)}
+                className={`glass-card rounded-2xl p-8 transition-all duration-500 cursor-pointer overflow-hidden relative group ${hoveredTenet === idx ? '-translate-y-4 bg-white/10 border-[#D4AF37]/50 shadow-[0_15px_30px_rgba(212,175,55,0.2)]' : 'hover:-translate-y-2'}`}
+              >
+                <div className="relative z-10">
+                  <span className="text-[#FFD662] text-4xl font-black block mb-3 group-hover:scale-110 transition-transform">{`0${idx + 1}`}</span>
+                  <span className="text-white font-bold tracking-widest uppercase text-sm drop-shadow-md">{value}</span>
                 </div>
               </div>
-
-              {/* Founder / Brand Image Pure Glass Card */}
-              <div className="relative mt-8 lg:mt-0 max-w-md mx-auto w-full">
-                <div className="animate-[bounce_8s_infinite_alternate] hover:animate-none transition-all duration-500">
-                  <div className="relative bg-white/5 backdrop-blur-2xl border border-white/20 p-6 sm:p-8 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.5)] aspect-square flex flex-col justify-end overflow-hidden group">
-                    
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518837695005-2083093ee354?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-1000"></div>
-                    
-                    <div className="relative z-10 bg-slate-900/60 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-xl translate-y-0 group-hover:-translate-y-2 transition-transform duration-500">
-                      <h3 className="text-xl sm:text-2xl font-black uppercase mb-2 text-cyan-300">The Founder's Truth</h3>
-                      <p className="text-xs sm:text-sm text-blue-50/90 leading-relaxed font-medium">
-                        "I built Million Dollar Bill Co. because I wanted to create a tidal wave of self-love. This isn't just a brand; it's a current. When you wear this, you aren't just making a statement—you are shifting the atmosphere."
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        )}
+        </div>
+      </section>
+    </div>
+  );
 
-        {/* COMMUNITY TAB */}
-        {activeTab === 'community' && (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 space-y-12">
-            <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <h2 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-300">The Daily Deposit</h2>
-              <p className="text-lg sm:text-xl text-blue-100/80">Affirmations, courage, and real talk from the MDB Community. Let it wash over you.</p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {quotes.map((quote) => (
-                <div key={quote.id} className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 sm:p-8 rounded-3xl hover:bg-white/10 hover:border-cyan-400/30 transition-all cursor-pointer group shadow-lg flex flex-col justify-between">
-                  <div>
-                    <Sparkles className="text-cyan-400 w-8 h-8 mb-6 group-hover:scale-110 transition-transform drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
-                    <p className="text-xl sm:text-2xl font-bold mb-6 leading-tight text-white/90">"{quote.text}"</p>
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-bold uppercase tracking-widest text-cyan-200/60">— {quote.author}</p>
-                    <div className="mt-6 flex items-center space-x-4 border-t border-white/10 pt-4">
-                      <button className="flex items-center space-x-2 text-sm text-white/50 hover:text-cyan-300 transition-colors">
-                        <Heart className="w-4 h-4" /> <span>Amplify</span>
-                      </button>
-                      <button className="flex items-center space-x-2 text-sm text-white/50 hover:text-blue-300 transition-colors">
-                        <MessageCircle className="w-4 h-4" /> <span>Discuss</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="bg-gradient-to-r from-blue-900/40 to-cyan-900/40 backdrop-blur-2xl border border-cyan-400/20 p-6 sm:p-10 rounded-3xl text-center flex flex-col items-center justify-center shadow-[0_0_40px_rgba(34,211,238,0.1)] relative overflow-hidden">
-              <h3 className="text-xl sm:text-2xl font-black uppercase mb-4 text-white">Leave Your Mark</h3>
-              <p className="mb-8 text-sm sm:text-base text-blue-100/80 max-w-lg mx-auto">Pour your own prosperity affirmation into the ocean for the 1 Billion+ family.</p>
-              
-              <form onSubmit={handleAffirmationSubmit} className="flex flex-col sm:flex-row w-full max-w-2xl relative z-10 gap-3 sm:gap-0">
-                <input 
-                  type="text" 
-                  value={affirmation}
-                  onChange={(e) => setAffirmation(e.target.value)}
-                  placeholder="I am a magnet for..." 
-                  className="w-full bg-slate-900/50 backdrop-blur-md border border-white/10 sm:border-r-0 rounded-full sm:rounded-r-none sm:rounded-l-full px-6 py-4 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400/50 transition-colors" 
-                  required
-                />
-                <button type="submit" className="w-full sm:w-auto bg-cyan-500 text-slate-950 font-black uppercase px-8 py-4 rounded-full sm:rounded-l-none sm:rounded-r-full hover:bg-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.5)] transition-all flex justify-center items-center whitespace-nowrap">
-                  {isSubmitted ? <CheckCircle2 className="w-6 h-6 animate-pulse" /> : 'Release'}
-                </button>
-              </form>
-
-              <div className={`absolute top-4 bg-cyan-400/20 border border-cyan-400 text-cyan-300 px-4 py-2 rounded-full text-sm font-bold tracking-wider transition-all duration-500 ${isSubmitted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
-                Affirmation released to the ocean.
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* VAULT TAB (Products/Collabs) */}
-        {activeTab === 'vault' && (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 space-y-12">
-            <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <h2 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-300">The Vault</h2>
-              <p className="text-lg sm:text-xl text-blue-100/80">Exclusive drops, future collabs, and the artifacts of abundance.</p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {launches.map((launch) => (
-                <div key={launch.id} className="group relative rounded-[2rem] overflow-hidden aspect-[4/5] bg-slate-900/50 border border-white/10 backdrop-blur-xl shadow-2xl">
-                  
-                  <div className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity group-hover:scale-110 group-hover:opacity-50 transition-all duration-1000" style={{backgroundImage: `url(${launch.image})`}}></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent z-10"></div>
-                  
-                  <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="inline-block bg-cyan-400/20 border border-cyan-400/50 text-cyan-300 text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
-                      {launch.status}
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-black uppercase leading-tight mb-2 text-white drop-shadow-md">{launch.name}</h3>
-                    <p className="text-cyan-200/80 font-bold uppercase tracking-widest text-xs sm:text-sm mb-6 drop-shadow-sm">{launch.type}</p>
-                    
-                    <button className="w-full bg-white/10 hover:bg-cyan-400 hover:text-slate-950 hover:border-cyan-400 backdrop-blur-md border border-white/20 text-white font-bold py-3 sm:py-4 rounded-full uppercase tracking-wider text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 group/btn">
-                      <span>{launch.status === 'Live Now' ? 'Secure Yours' : 'Join Waitlist'}</span>
-                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+  const CommunityPage = () => (
+    <div className="min-h-screen pt-32 pb-24 bg-gradient-to-b from-[#0B132B] to-[#141b33] animate-in fade-in duration-700">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <Users className="h-16 w-16 text-[#D4AF37] mx-auto mb-6" />
+          <h2 className="text-5xl font-extrabold text-white mb-4">The Inner Circle</h2>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">Connect with a community that celebrates authenticity, peace, and living the Million Dollar lifestyle.</p>
+        </div>
+        
+        <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-12 text-center max-w-4xl mx-auto border border-[#D4AF37]/20 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+          <h3 className="text-3xl font-bold text-white mb-6">Community Features Coming Soon</h3>
+          <p className="text-gray-300 mb-8">We are building an exclusive space for events, networking, and celebrating life together. Stay tuned.</p>
+          <a href={STORE_URL} className="inline-flex items-center gap-2 bg-[#D4AF37] text-[#0B132B] px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:scale-105 transition-transform">
+            Shop the Looks Meantime <ArrowRight size={20} />
+          </a>
+        </div>
       </div>
+    </div>
+  );
+
+  const QuotesPage = () => (
+    <div className="min-h-screen relative animate-in fade-in duration-1000 pt-32 pb-24 flex flex-col justify-center">
+      
+      {/* The Dynamic Daily Background Image (Opacity increased for vibrancy) */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-fixed z-0 transition-opacity duration-1000 opacity-80"
+        style={{ backgroundImage: `url('${currentBgImage}')` }}
+      />
+      
+      {/* Lightened gradient overlay - letting the image and glassmorphism shine! */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B132B]/70 via-[#0B132B]/20 to-[#141b33]/70 z-0" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-8 text-[#FFD662] font-black text-xs tracking-widest uppercase shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <Sparkles size={14} />
+            <span>Curated for {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+            <Sparkles size={14} />
+          </div>
+          <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-2xl">Daily Inspired Energy</h2>
+          <p className="text-xl text-gray-100 max-w-2xl mx-auto font-medium drop-shadow-md">Daily fuel for the mind and soul. New quotes and a new atmosphere every 24 hours.</p>
+        </div>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          {dailyQuotes.map((quote, idx) => (
+            <div key={idx} className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 relative group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4AF37]/50 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-500 flex flex-col justify-between overflow-hidden shadow-xl">
+              {/* Subtle glowing orb behind the glass */}
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#D4AF37] rounded-full blur-[60px] opacity-0 group-hover:opacity-30 transition-opacity duration-500 z-0"></div>
+              
+              <div className="relative z-10">
+                <Quote className="h-8 w-8 text-[#D4AF37]/60 group-hover:text-[#D4AF37] transition-colors mb-4 transform group-hover:scale-110 duration-500 drop-shadow-md" />
+                {/* Heavy text shadow added here for perfect readability against bright backgrounds */}
+                <p className="text-lg text-white font-medium italic leading-relaxed mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  "{quote.text}"
+                </p>
+              </div>
+              
+              <div className="relative z-10 border-t border-white/20 pt-4 mt-auto">
+                <p className="text-[#FFD662] font-bold tracking-widest uppercase text-xs drop-shadow-md">— {quote.author}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen text-white font-sans bg-[#0B132B] selection:bg-[#D4AF37] selection:text-[#0B132B]">
+      <style dangerouslySetInnerHTML={{__html: `
+        .glass-nav {
+          background: rgba(11, 19, 43, 0.4);
+          backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .glass-card {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .hover-bounce {
+          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hover-bounce:hover {
+          transform: translateY(-5px) scale(1.05);
+        }
+      `}} />
+
+      <header className="glass-nav fixed top-0 w-full z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-24">
+            <div 
+              className="flex-shrink-0 flex items-center cursor-pointer group"
+              onClick={() => setCurrentPage('home')}
+            >
+              <h1 className="text-2xl md:text-3xl font-black tracking-widest text-white uppercase group-hover:scale-105 transition-transform duration-300">
+                Million Dollar <span className="text-[#D4AF37]">Bill</span>
+              </h1>
+            </div>
+
+            <nav className="hidden md:flex space-x-8 items-center">
+              <button onClick={() => setCurrentPage('home')} className={`text-sm font-bold tracking-wider uppercase transition-colors ${currentPage === 'home' ? 'text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}>Home</button>
+              <button onClick={() => setCurrentPage('community')} className={`text-sm font-bold tracking-wider uppercase transition-colors ${currentPage === 'community' ? 'text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}>Community</button>
+              <button onClick={() => setCurrentPage('quotes')} className={`text-sm font-bold tracking-wider uppercase transition-colors ${currentPage === 'quotes' ? 'text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}>Inspired Quotes</button>
+              <a href={STORE_URL} className="text-sm font-bold tracking-wider uppercase text-white hover:text-[#D4AF37] flex items-center gap-1 transition-colors">
+                Shop Store <ArrowRight size={16} />
+              </a>
+            </nav>
+
+            <div className="flex items-center md:hidden">
+              <button className="p-2 text-white hover:text-[#D4AF37]" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                {isMenuOpen ? <X className="h-8 w-8" /> : <Menu className="h-8 w-8" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {isMenuOpen && (
+          <div className="md:hidden glass-nav absolute w-full border-t border-[#D4AF37]/20 bg-[#0B132B]/95 backdrop-blur-xl">
+            <div className="px-6 pt-4 pb-8 space-y-6 text-center">
+              <button onClick={() => {setCurrentPage('home'); setIsMenuOpen(false);}} className="block w-full text-xl font-bold text-white hover:text-[#D4AF37] uppercase">Home</button>
+              <button onClick={() => {setCurrentPage('community'); setIsMenuOpen(false);}} className="block w-full text-xl font-bold text-white hover:text-[#D4AF37] uppercase">Community</button>
+              <button onClick={() => {setCurrentPage('quotes'); setIsMenuOpen(false);}} className="block w-full text-xl font-bold text-white hover:text-[#D4AF37] uppercase">Inspired Quotes</button>
+              <a href={STORE_URL} className="block w-full text-xl font-black text-[#D4AF37] uppercase pt-4 border-t border-white/10">Go To Store →</a>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main>
+        {currentPage === 'home' && <HomePage />}
+        {currentPage === 'community' && <CommunityPage />}
+        {currentPage === 'quotes' && <QuotesPage />}
+      </main>
+
+      <footer className="bg-[#050914] pt-20 pb-10 border-t-4 border-[#D4AF37] relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+            
+            <div className="md:col-span-5">
+              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-widest flex items-center gap-2">
+                Million Dollar <span className="text-[#D4AF37]">Bill</span> <Sparkles className="text-[#D4AF37]" size={24}/>
+              </h2>
+              <p className="text-gray-400 max-w-sm mb-8 text-lg leading-relaxed font-medium">
+                Bringing the Myrtle Beach heat to the world. A lifestyle brand built on Unity, Peace, Love, and absolute Prosperity.
+              </p>
+              <div className="inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] px-6 py-2 rounded-full font-bold tracking-widest uppercase text-sm">
+                Aeterna Opera
+              </div>
+            </div>
+            
+            <div className="md:col-span-3">
+              <h4 className="text-white font-black mb-6 uppercase tracking-widest text-sm">The Ecosystem</h4>
+              <ul className="space-y-4 text-gray-400 font-medium">
+                <li><a href={STORE_URL} className="hover:text-[#D4AF37] transition-colors flex items-center gap-2">Main Store <ArrowRight size={14}/></a></li>
+                <li><a href={`${STORE_URL}/collections/million-dollar-babies`} className="hover:text-[#D4AF37] transition-colors">Million Dollar Babies</a></li>
+                <li><a href={`${STORE_URL}/collections/million-dollar-beauties`} className="hover:text-[#D4AF37] transition-colors flex items-center gap-2">Million Dollar Beauties <Heart size={14} className="text-pink-400"/></a></li>
+                <li><a href={`${STORE_URL}/collections/breakfast-brunch`} className="hover:text-[#D4AF37] transition-colors flex items-center gap-2">MD Breakfast / Brunch <Coffee size={14}/></a></li>
+              </ul>
+            </div>
+            
+            <div className="md:col-span-4">
+              <h4 className="text-white font-black mb-6 uppercase tracking-widest text-sm">Join The Energy</h4>
+              <p className="text-gray-400 mb-6 font-medium">Follow us across the web for exclusive drops, wild moments, and daily inspiration.</p>
+              
+              <div className="flex flex-wrap gap-4">
+                <a href="https://instagram.com/milliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
+                <FaInstagram size={20} />
+                </a>
+
+                <a href="https://facebook.com/milliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
+                <FaFacebookF size={20} />
+                </a>
+
+                <a href="https://tiktok.com/@millions1023" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
+                  <FaTiktok size={20} />
+                </a>
+
+                <a href="https://snapchat.com/coolbreezemb" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
+                  <FaSnapchatGhost size={20} />
+                </a>
+
+                <a href="https://pinterest.com/themilliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
+                  <FaPinterestP size={20} />
+                </a>
+              </div>
+            </div>
+            
+          </div>
+          
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 font-medium text-sm">
+            <p>
+              &copy; {new Date().getFullYear()} Million Dollar Bill Co. | Myrtle Beach, SC
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+              <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
