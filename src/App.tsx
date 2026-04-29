@@ -1,22 +1,11 @@
 import { Menu, X, ChevronRight, Sparkles, Heart, Coffee, Quote, Users, ArrowRight, Link, Bird, Fingerprint } from 'lucide-react';
+import { useMemo, useState } from 'react';
 // --- CUSTOM SVG ICONS FOR TIKTOK, SNAPCHAT & PINTEREST ---
-const TikTokIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/>
-  </svg>
-);
 
-const SnapchatIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12.11 1.74c-2.3 0-4.64.95-5.9 3.12-.66 1.15-.88 2.66-.75 4.09.28 2.94 1.83 5.37 3.55 7.6.48.62 1 1.25 1.56 1.84.45.47.88.94 1.43 1.34.34.25.75.46 1.18.5a2 2 0 0 0 1.25-.33c.48-.33.9-.76 1.3-1.18.6-.65 1.17-1.32 1.7-2.02 1.74-2.27 3.26-4.75 3.51-7.75.14-1.5-.12-3.03-.8-4.2-1.3-2.22-3.64-3.01-6.03-3.01zm-1.8 15.68c-.64-.53-1.28-1.08-1.93-1.63-.44-.38-.9-.76-1.32-1.16a29.13 29.13 0 0 1-2.9-3.23c-.34-.44-.65-.92-.88-1.42-.36-.78-.5-1.65-.45-2.52.05-1.05.3-2.1.8-3.03.9-1.66 2.5-2.82 4.4-3.15 1.73-.3 3.52 0 5 1.01 1.45 1 2.45 2.5 2.76 4.25.17.97.08 1.96-.23 2.88-.28.84-.7 1.63-1.2 2.34-1.1 1.54-2.4 2.94-3.66 4.35-.45.5-1.04 1.05-1.68 1.12-.22.02-.45-.03-.63-.16l-.08-.05z"/>
-  </svg>
-);
 
-const PinterestIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.105 0 7.301 2.923 7.301 6.822 0 4.084-2.574 7.37-6.147 7.37-1.2 0-2.328-.624-2.714-1.363l-.74 2.818c-.268 1.023-.996 2.302-1.488 3.084 1.144.35 2.365.539 3.626.539 6.623 0 11.988-5.367 11.988-11.988C24 5.367 18.64 0 12.017 0z"/>
   </svg>
-);
 
 // --- MAIN APPLICATION ---
 export default function App() {
@@ -314,23 +303,18 @@ export default function App() {
               
               <div className="flex flex-wrap gap-4">
                 <a href="https://instagram.com/milliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                <size={20} />
                 </a>
 
                 <a href="https://facebook.com/milliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                < size={20} />
                 </a>
 
                 <a href="https://tiktok.com/@millions1023" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                  < size={20} />
                 </a>
 
                 <a href="https://snapchat.com/coolbreezemb" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                  < size={20} />
                 </a>
 
                 <a href="https://pinterest.com/themilliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                  < size={20} />
                 </a>
               </div>
             </div>
