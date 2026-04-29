@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+
 import { Menu, X, ChevronRight, Sparkles, Heart, Coffee, Quote, Users, ArrowRight, Link, Bird, Fingerprint } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTiktok, FaSnapchatGhost, FaPinterestP } from 'react-icons/fa';
 // --- CUSTOM SVG ICONS FOR TIKTOK, SNAPCHAT & PINTEREST ---
