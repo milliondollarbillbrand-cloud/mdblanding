@@ -1,4 +1,3 @@
-
 import { Menu, X, ChevronRight, Sparkles, Heart, Coffee, Quote, Users, ArrowRight, Link, Bird, Fingerprint } from 'lucide-react';
 // --- CUSTOM SVG ICONS FOR TIKTOK, SNAPCHAT & PINTEREST ---
 const TikTokIcon = () => (
@@ -327,11 +326,11 @@ export default function App() {
                 </a>
 
                 <a href="https://snapchat.com/coolbreezemb" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                  <FaSnapchatGhost size={20} />
+                  < size={20} />
                 </a>
 
                 <a href="https://pinterest.com/themilliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                  <FaPinterestP size={20} />
+                  < size={20} />
                 </a>
               </div>
             </div>
