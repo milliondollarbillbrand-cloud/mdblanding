@@ -1,6 +1,5 @@
 
 import { Menu, X, ChevronRight, Sparkles, Heart, Coffee, Quote, Users, ArrowRight, Link, Bird, Fingerprint } from 'lucide-react';
-import { FaInstagram, FaFacebookF, FaTiktok, FaSnapchatGhost, FaPinterestP } from 'react-icons/fa';
 // --- CUSTOM SVG ICONS FOR TIKTOK, SNAPCHAT & PINTEREST ---
 const TikTokIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -316,15 +315,15 @@ export default function App() {
               
               <div className="flex flex-wrap gap-4">
                 <a href="https://instagram.com/milliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                <FaInstagram size={20} />
+                <size={20} />
                 </a>
 
                 <a href="https://facebook.com/milliondollarbillco" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                <FaFacebookF size={20} />
+                < size={20} />
                 </a>
 
                 <a href="https://tiktok.com/@millions1023" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
-                  <FaTiktok size={20} />
+                  < size={20} />
                 </a>
 
                 <a href="https://snapchat.com/coolbreezemb" target="_blank" rel="noreferrer" className="bg-white/5 p-3 rounded-full hover:bg-[#D4AF37] hover:text-[#0B132B] transition-all duration-300 hover:-translate-y-1">
